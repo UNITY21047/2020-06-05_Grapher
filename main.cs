@@ -2,14 +2,13 @@ using System;
 using System.IO;
 using System.Diagnostics;
 
-
 public class main
 {
 	public static void Main(string[] arguments)
 	{
 		string function = arguments[0];
 		string execution_directory = Directory.GetCurrentDirectory() + "\\";
-		string compile_file_path = execution_directory + "graph.bat";
+		string compile_file_path = execution_directory + "run.bat";
         string main_file_path = execution_directory + "graph.cs";
 		string[] compile_file_contents = {	"csc -out:o.exe -main:graph -reference:\"C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\System.Windows.Forms.dll\" -reference:\"C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\System.Collections.dll\" graph.cs",
 											"o"};
@@ -110,14 +109,21 @@ public class main
 										"      Application.Run(new graph());",
 										"    }",
 										"}"};
-		string path_for_start_one = "graph.bat";
+		string path_for_start_one = @"run.bat";
 
 		File.WriteAllLines(compile_file_path, compile_file_contents);
 		File.WriteAllLines(main_file_path, main_file_contents);
 		
 		try
 		{
-			Process.Start(path_for_start_one);
+			Process process = new Process();
+			process.StartInfo.FileName = path_for_start_one;
+			process.Start();
+			process.WaitForExit();
+			process.Close();
+			File.Delete(Directory.GetCurrentDirectory() + "\\" + @"graph.cs");
+			File.Delete(@"run.bat");
+			File.Delete(@"o.exe");
 		}
 		catch(Exception e)
 		{
